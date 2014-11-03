@@ -19,7 +19,7 @@ end
 get '/' do
   if session[:token]
    access_token = OAuth2::AccessToken.new(@client, session[:token])
-   result = access_token.get('/invoices/')
+   result = access_token.get('/api/v1/invoices/')
    result.body
   else
     '<a href="/auth">認証に進む</a>'
