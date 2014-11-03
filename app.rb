@@ -1,6 +1,8 @@
 require 'sinatra'
+require 'haml'
 require 'dotenv'
 require 'oauth2'
+require 'json'
 
 Dotenv.load
 enable :sessions
@@ -20,9 +22,10 @@ get '/' do
   if session[:token]
    access_token = OAuth2::AccessToken.new(@client, session[:token])
    result = access_token.get('/api/v1/invoices/')
-   result.body
+   @invoices = JSON.parse(result.body)
+   haml :index
   else
-    '<a href="/auth">認証に進む</a>'
+    haml :login
   end
 end
 
@@ -49,3 +52,34 @@ def redirect_uri
   #TODO: 環境変数などからいい感じにURLを組み立てる
   'http://localhost:9393/callback'
 end
+
+__END__
+
+@@ layout
+%html
+  %header
+    %link{rel: 'stylesheet', href: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css'}
+  %body
+    %div.container
+      = yield
+
+@@ index
+%h1 請求書一覧
+%table.table.table-bordered
+  %tr
+    %th 請求書番号
+    %th 請求日
+    %th 請求先
+  - @invoices.each do |i|
+    %tr
+      %td #{i['issue_date']}
+      %td #{i['invoice_number']}
+      %td #{i['recipient_name']}
+%div
+  %a.btn.btn-primary(href='/logout')
+    ログアウト
+
+@@login
+%h1 Misoca API Exampleへようこそ
+%a.btn.btn-primary(href='/auth')
+  Misocaでログイン
