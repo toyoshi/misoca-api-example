@@ -3,6 +3,7 @@ require 'haml'
 require 'dotenv'
 require 'oauth2'
 require 'json'
+require 'base64'
 
 Dotenv.load
 enable :sessions
@@ -16,12 +17,15 @@ before do
     authorize_url: ENV['MISOCA_AUTHORIZE_URI'],
     token_url: ENV['MISOCA_TOKEN_URI'],
   )
+
+  if session[:token]
+    @access_token = OAuth2::AccessToken.new(@client, session[:token])
+  end
 end
 
 get '/' do
   if session[:token]
-   access_token = OAuth2::AccessToken.new(@client, session[:token])
-   result = access_token.get('/api/v1/invoices/')
+   result = @access_token.get('/api/v1/invoices/?limit=10')
    @invoices = JSON.parse(result.body)
    haml :index
   else
@@ -46,6 +50,14 @@ end
 get '/logout' do
   session[:token] = nil
   redirect '/'
+end
+
+get '/invoice/:id/pdf' do
+  result = @access_token.get('/api/v1/invoice/%d/pdf' % params[:id])
+  pdf = Base64.decode64(JSON.parse(result.body)['pdf'])
+
+  content_type 'application/pdf'
+  pdf
 end
 
 def redirect_uri
@@ -74,7 +86,9 @@ __END__
     %tr
       %td #{i['issue_date']}
       %td #{i['invoice_number']}
-      %td #{i['recipient_name']}
+      %td 
+        %a{href: "/invoice/#{i['id']}/pdf"}
+          = i['recipient_name']
 %div
   %a.btn.btn-primary(href='/logout')
     ログアウト
