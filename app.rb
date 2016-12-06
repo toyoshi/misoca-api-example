@@ -1,11 +1,6 @@
-require 'sinatra'
-require 'haml'
-require 'dotenv'
-require 'oauth2'
-require 'json'
-require 'base64'
-
+Bundler.require
 Dotenv.load
+
 enable :sessions
 set :session_secret, ENV['SESSION_SECRET']
 
