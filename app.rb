@@ -22,9 +22,9 @@ get '/' do
   if session[:token]
    result = @access_token.get('/api/v1/invoices/?limit=10')
    @invoices = JSON.parse(result.body)
-   haml :index
+   slim :index
   else
-    haml :login
+    slim :login
   end
 end
 
@@ -63,32 +63,31 @@ end
 __END__
 
 @@ layout
-%html
-  %header
-    %link{rel: 'stylesheet', href: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css'}
-  %body
-    %div.container
-      = yield
+html
+  head
+    link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css'
+  body
+    div.container
+      == yield
 
 @@ index
-%h1 請求書一覧
-%table.table.table-bordered
-  %tr
-    %th 請求書番号
-    %th 請求日
-    %th 請求先
+h1 請求書一覧
+table.table.table-bordered
+  tr
+    th 請求書番号
+    th 請求日
+    th 請求先
   - @invoices.each do |i|
-    %tr
-      %td #{i['issue_date']}
-      %td #{i['invoice_number']}
-      %td 
-        %a{href: "/invoice/#{i['id']}/pdf"}
+    tr
+      td = i['issue_date'] 
+      td = i['invoice_number'] 
+      td
+        a href="/invoice/#{i['id']}/pdf" 
           = i['recipient_name']
-%div
-  %a.btn.btn-primary(href='/logout')
-    ログアウト
+div
+  a.btn.btn-primary(href='/logout')
+    | ログアウト
 
 @@login
-%h1 Misoca API Exampleへようこそ
-%a.btn.btn-primary(href='/auth')
-  Misocaでログイン
+h1 Misoca API Exampleへようこそ
+a.btn.btn-primary href='/auth' Misocaでログイン
