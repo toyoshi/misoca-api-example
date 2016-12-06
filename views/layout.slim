@@ -3,5 +3,17 @@ html
     link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css'
   body
     div.container
-      == yield
+      h1.page-header Misoca API
+      .row
+        .col-md-3
+          ul.list-group
+            li.list-group-item
+              a href="/" 請求書一覧
+            li.list-group-item
+              a href="/estimates" 見積書一覧
+        .col-md-9
+          == yield
 
+      div
+        a.btn.btn-primary(href='/logout')
+          | ログアウト

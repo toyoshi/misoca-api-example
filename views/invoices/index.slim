@@ -1,4 +1,4 @@
-h1.page-header 請求書一覧
+h2 請求書一覧
 table.table.table-bordered
   tr
     th 請求書番号
@@ -11,7 +11,4 @@ table.table.table-bordered
       td
         a href="/invoice/#{i['id']}/pdf" 
           = i['recipient_name']
-div
-  a.btn.btn-primary(href='/logout')
-    | ログアウト
 

@@ -28,6 +28,12 @@ get '/' do
   end
 end
 
+get '/estimates' do
+  result = @access_token.get('/api/v3/estimates')
+  @estimates = JSON.parse(result.body)
+  slim :'estimates/index'
+end
+
 get '/auth' do
   authorize_url = @client.auth_code.authorize_url(redirect_uri: redirect_uri, scope: 'read')
   redirect authorize_url

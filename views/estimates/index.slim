@@ -1,0 +1,14 @@
+h2 見積書一覧
+table.table.table-bordered
+  tr
+    th 見積日
+    th 見積番号
+    th 
+  - @estimates.each do |e|
+    tr
+      td = e['issue_date'] 
+      td = e['estimate_number'] 
+      td
+        a href="/estimate/#{e['id']}/pdf" 
+          = "#{e['recipient_name']}  #{e['subject']}"
+
