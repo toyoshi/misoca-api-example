@@ -1,0 +1,17 @@
+h1.page-header 請求書一覧
+table.table.table-bordered
+  tr
+    th 請求書番号
+    th 請求日
+    th 請求先
+  - @invoices.each do |i|
+    tr
+      td = i['issue_date'] 
+      td = i['invoice_number'] 
+      td
+        a href="/invoice/#{i['id']}/pdf" 
+          = i['recipient_name']
+div
+  a.btn.btn-primary(href='/logout')
+    | ログアウト
+
